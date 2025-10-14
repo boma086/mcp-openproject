@@ -1,0 +1,25 @@
+{
+  "uvx": {
+    "command": "uvx",
+    "args": [
+      "run",
+      "/path/to/mcp-openproject_standalone.py"
+    ],
+    "description": "Run with uvx (recommended)"
+  },
+  "pipx": {
+    "command": "pipx",
+    "args": [
+      "run",
+      "/path/to/mcp-openproject_standalone.py"
+    ],
+    "description": "Run with pipx"
+  },
+  "direct": {
+    "command": "python3",
+    "args": [
+      "/path/to/mcp-openproject_standalone.py"
+    ],
+    "description": "Run directly with Python"
+  }
+}

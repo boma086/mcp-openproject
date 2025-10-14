@@ -1,0 +1,40 @@
+# MCP Client Dependencies - Fixed for AI Website Compatibility
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# Using latest version for compatibility
+langchain-mcp-adapters>=0.1.11
+
+# Langchain Ecosystem
+langchain>=0.1.0
+langchain-openai>=0.0.2
+
+# Templates and Web
+jinja2>=3.1.0
+python-multipart>=0.0.6
+aiofiles>=23.0.0
+
+# Data Validation and Database
+pydantic>=2.0.0
+sqlalchemy>=2.0.0
+asyncpg>=0.30.0,<0.31.0
+
+# Configuration and Monitoring
+python-dotenv>=1.0.1
+structlog>=23.0.0
+
+# Utilities
+watchfiles>=0.20.0
+httpx>=0.25.0
+redis>=5.0.0
+
+# Security
+cryptography>=41.0.0
+PyJWT>=2.8.0
+
+# Testing and Development (optional)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+black>=23.0.0
+ruff>=0.1.0
