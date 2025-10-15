@@ -2,21 +2,12 @@
 
 A Model Context Protocol (MCP) server for integrating OpenProject with AI assistants like Claude, Windsurf, and other MCP-compatible clients.
 
-## Features
+## 🚀 Quick Start - 5 Minutes to Running
 
-- **🚀 GitHub Installation**: Install directly from GitHub with pipx
-- **📡 Multiple Transport Modes**: Stdio, HTTP, and SSE support
-- **🔗 OpenProject API Integration**: Complete access to projects, work packages, and tasks
-- **🛡️ Security**: Encrypted configuration and API key management
-- **🖥️ CLI Interface**: Comprehensive command-line tools
-- **🎯 MCP Compatible**: Works with Claude Code, Windsurf, and other MCP clients
-
-## Quick Start
-
-### 🚀 Recommended: Install from GitHub (Global)
+### Option 1: Install from GitHub (Recommended)
 
 ```bash
-# Install directly from GitHub (recommended for MCP clients)
+# Install globally from GitHub
 pipx install git+https://github.com/boma086/mcp-openproject.git
 
 # Set environment variables
@@ -28,22 +19,56 @@ export ENCRYPTION_KEY="your-encryption-key-here"
 mcp-openproject --help
 ```
 
-### 📦 Development Installation
+### Option 2: Development Installation
 
 ```bash
-# Clone and install for development
+# Clone repository
 git clone https://github.com/boma086/mcp-openproject.git
 cd mcp-openproject
+
+# Install in development mode
 pip install -e .
 
 # Set environment variables
 export OPENPROJECT_BASE_URL="http://localhost:8090/"
 export OPENPROJECT_API_KEY="your-api-key-here"
 export ENCRYPTION_KEY="your-encryption-key-here"
-
-# Test installation
-mcp-openproject test
 ```
+
+## ⚙️ MCP Client Configuration
+
+### Claude Code / Windsurf Configuration
+
+Add this to your MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "openproject": {
+      "command": "mcp-openproject",
+      "args": ["server", "--stdio"],
+      "env": {
+        "OPENPROJECT_BASE_URL": "http://localhost:8090/",
+        "OPENPROJECT_API_KEY": "your-api-key-here",
+        "ENCRYPTION_KEY": "your-encryption-key-here"
+      }
+    }
+  }
+}
+```
+
+**Two-step process for MCP clients:**
+1. **Install**: `pipx install git+https://github.com/boma086/mcp-openproject.git`
+2. **Configure**: Add the JSON configuration above to your MCP client
+
+## Features
+
+- **🚀 GitHub Installation**: Install directly from GitHub with pipx
+- **📡 Multiple Transport Modes**: Stdio, HTTP, and SSE support
+- **🔗 OpenProject API Integration**: Complete access to projects, work packages, and tasks
+- **🛡️ Security**: Encrypted configuration and API key management
+- **🖥️ CLI Interface**: Comprehensive command-line tools
+- **🎯 MCP Compatible**: Works with Claude Code, Windsurf, and other MCP clients
 
 ## Configuration
 
