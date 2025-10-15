@@ -52,7 +52,7 @@ class WorkPackageModelLinks(BaseModel):
     available_watchers: Optional[Link] = Field(default=None, description="All users that can be added to the work package as watchers.  **Resource**: User  # Conditions  **Permission** add work package watchers", alias="availableWatchers")
     budget: Optional[Link] = Field(default=None, description="The budget this work package is associated to  **Resource**: Budget  # Conditions  **Permission** view cost objects")
     category: Optional[Link] = Field(default=None, description="The category of the work package  **Resource**: Category")
-    children: List[Link]
+    children: Optional[List[Link]] = Field(default=None, description="Child work packages")
     add_file_link: Optional[Link] = Field(default=None, description="Add a file link to the work package  # Conditions  **Permission**: manage_file_links", alias="addFileLink")
     file_links: Optional[Link] = Field(default=None, description="Gets the file link collection of this work package  # Conditions  **Permission**: view_file_links", alias="fileLinks")
     parent: Optional[Link] = Field(default=None, description="Parent work package  **Resource**: WorkPackage")

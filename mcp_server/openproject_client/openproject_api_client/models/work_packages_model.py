@@ -39,8 +39,10 @@ class WorkPackagesModel(BaseModel):
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['Collection']):
-            raise ValueError("must be one of enum values ('Collection')")
+        # Allow both Collection and WorkPackageCollection for compatibility
+        valid_values = {'Collection', 'WorkPackageCollection'}
+        if value not in valid_values:
+            raise ValueError(f"must be one of enum values {tuple(valid_values)}")
         return value
 
     model_config = ConfigDict(

@@ -1,7 +1,0 @@
-# Standalone MCP OpenProject Server Requirements
-# For use with uvx or pipx
-
-mcp>=1.17.0
-httpx>=0.28.0
-backoff>=2.2.1
-pydantic>=2.11.0
