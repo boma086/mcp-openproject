@@ -7,7 +7,8 @@ import asyncio
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_mcp import FastApiMCP
-import os
+from fastapi_mcp import FastApiMCP
+from .auth import verify_mcp_client, get_client_auth_infoimport os
 import sys
 from typing import Optional
 from dotenv import load_dotenv
@@ -170,11 +171,15 @@ async def root():
     }
 
 # Initialize fastapi_mcp
+# Initialize fastapi_mcp with authentication
 mcp = FastApiMCP(
     app,
     name="OpenProject MCP Server",
-    description="MCP server for OpenProject integration with weekly reports"
-)
+    description="MCP server for OpenProject integration with client authentication",
+    auth_config={
+        "dependencies": [verify_mcp_client]
+    }
+))
 
 # Mount MCP server using streamable HTTP transport
 mcp.mount_http()
@@ -211,3 +216,49 @@ async def shutdown_event():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8002)
+# Configuration check endpoint for Smithery deployment validation
+@app.get("/config", operation_id="check_configuration")
+async def check_configuration():
+    """Check current configuration status for deployment validation."""
+    import os
+    
+    base_url = os.getenv("OPENPROJECT_BASE_URL")
+    api_key = os.getenv("OPENPROJECT_API_KEY") 
+    encryption_key = os.getenv("ENCRYPTION_KEY")
+    
+    # Mask sensitive values in response
+    masked_api_key = "***" + (api_key[-4:] if api_key and len(api_key) > 4 else "***")
+    masked_encryption_key = "***" + (encryption_key[-4:] if encryption_key and len(encryption_key) > 4 else "***")
+    
+    return {
+        "status": "configured",
+        "openproject_configured": bool(base_url and api_key),
+        "encryption_configured": bool(encryption_key),
+        "openproject_base_url": base_url,
+        "openproject_api_key": masked_api_key,
+        "encryption_key": masked_encryption_key,
+        "mcp_endpoint": "/mcp",
+        "health_endpoint": "/health"
+    }
+
+# Client configuration endpoint for MCP client setup
+@app.get("/client-config", operation_id="get_client_config")
+async def get_client_config():
+    """Get client configuration for MCP client setup."""
+    try:
+        auth_info = get_client_auth_info()
+        return {
+            "status": "ready",
+            "mcp_endpoint": "/mcp",
+            "auth_required": True,
+            "auth_config": auth_info,
+            "windsurf_config": {
+                "url": "http://localhost:8000/mcp",
+                "auth": {
+                    "type": "bearer",
+                    "token": auth_info["auth_token"]
+                }
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Configuration error: {str(e)}")

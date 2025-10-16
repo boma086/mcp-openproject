@@ -117,18 +117,14 @@ startCommand:
         description: "OpenProject API key for authentication"
       encryptionKey:
         type: "string"
-        title: "Encryption Key"
-        description: "Encryption key for secure data handling"
-        default: "default-encryption-key"
+        title: "MCP Client Authentication Key"
+        description: "Encryption key for MCP client authentication (provide this to Windsurf/Claude Code)"
+        format: "password"
+        default: "auto-generated-secure-key"
   exampleConfig:
-    openprojectBaseUrl: "http://localhost:8080"
-    openprojectApiKey: "your-api-key-here"
-    encryptionKey: "your-encryption-key-here"
-
-# MCP server specific configuration
-mcp:
-  # Server capabilities
-  capabilities:
+    openprojectBaseUrl: "http://company.openproject.com"
+    openprojectApiKey: "your-openproject-api-key"
+    encryptionKey: "your-mcp-client-auth-key"  capabilities:
     # Tool listing
     list_tools: true
     # Tool calling
