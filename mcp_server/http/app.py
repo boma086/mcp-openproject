@@ -6,9 +6,9 @@ import structlog
 import asyncio
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_mcp import FastApiMCP
-from fastapi_mcp import FastApiMCP
-from .auth import verify_mcp_client, get_client_auth_infoimport os
+from fastapi_mcp import FastApiMCP, AuthConfig
+from .auth import verify_mcp_client, get_client_auth_info
+import os
 import sys
 from typing import Optional
 from dotenv import load_dotenv
@@ -170,17 +170,12 @@ async def root():
         "mcp_endpoint": "/mcp"
     }
 
-# Initialize fastapi_mcp
-# Initialize fastapi_mcp with authentication
+# Initialize fastapi_mcp (simplified version for now)
 mcp = FastApiMCP(
     app,
     name="OpenProject MCP Server",
-    description="MCP server for OpenProject integration with client authentication",
-    auth_config={
-        "dependencies": [verify_mcp_client]
-    }
-))
-
+    description="MCP server for OpenProject integration with HTTP transport"
+)
 # Mount MCP server using streamable HTTP transport
 mcp.mount_http()
 
