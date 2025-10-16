@@ -1,6 +1,8 @@
 # CLAUDE.md
 
 **Project**: MCP OpenProject Integration Platform
+**Version**: 0.0.1 (Production Ready)
+**Status**: ✅ PyPI Published - https://pypi.org/project/mcp-openproject/
 
 ## 🏗️ Project Structure
 ```
@@ -54,6 +56,35 @@ source venv/bin/activate && python <script>
 
 ## 📊 Key Documentation
 
+
+## 🌐 HTTP Mode Architecture (IN PROGRESS)
+
+**Current Status**: Design completed, implementation in progress
+
+### Architecture Design
+- `docs/architecture/http-mode-design.md` - **NEW**: Complete HTTP mode architecture design
+  - Core service layer with OpenProjectClient integration
+  - HTTP transport using fastapi_mcp library
+  - Dependency injection for shared logic
+  - Support for uvicorn, Smithery, and Docker deployment
+
+### Key Design Principles
+- **Zero modification to stdio code**: Keep existing functionality intact
+- **Maximize OpenProjectClient reuse**: Leverage generated API client directly
+- **MCP compliance**: Follow official HTTP transport specification
+- **Async-first design**: Full async/await support for performance
+- **Extensible architecture**: Ready for SSE and WebSocket expansion
+
+### Implementation Plan (Phase-based)
+1. **Phase 1**: Core service layer - Extract OpenProjectClient as shared service
+2. **Phase 2**: HTTP transport layer - Implement fastapi_mcp integration
+3. **Phase 3**: CLI extension - Add --http/--sse options with uvicorn support
+4. **Phase 4**: Deployment configuration - Add smithery.yaml and Docker support
+5. **Phase 5**: Testing and validation - End-to-end integration testing
+
+**Next Step**: Python expert review (pending), then begin Phase 1 implementation
+
+---
 
 ### Architecture
 - `docs/architecture/PROJECT_STRUCTURE.md` - Complete architecture

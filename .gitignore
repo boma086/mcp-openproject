@@ -238,6 +238,7 @@ mcp-server/venv*/
 
 # Build artifacts
 build/
+build_env/
 *.egg-info/
 .mypy_cache/
 .pytest_cache/

@@ -1,0 +1,189 @@
+# Smithery Configuration for MCP OpenProject Server
+# This configuration enables deployment on Smithery AI platform
+# https://smithery.ai
+
+name: "mcp-openproject"
+description: "OpenProject MCP Server with HTTP and SSE transport support"
+version: "0.0.1"
+
+# Transport configuration - supports both HTTP and SSE
+transport:
+  # Streamable HTTP (primary transport)
+  type: "http"
+  # SSE transport (alternative for future expansion)
+  # type: "sse"  # Uncomment to enable SSE mode
+
+# Server endpoints configuration
+endpoints:
+  # Health check endpoint for monitoring
+  health: "/health"
+
+  # MCP endpoint (Streamable HTTP)
+  mcp: "/mcp"
+
+  # SSE endpoint (future expansion)
+  # sse: "/sse"  # Uncomment to enable SSE endpoint
+
+# Environment variables required for the MCP server
+# Smithery will inject these into the deployment environment
+environment:
+  # OpenProject API configuration
+  OPENPROJECT_BASE_URL:
+    description: "Base URL for OpenProject instance"
+    required: true
+    default: "http://localhost:8080"
+
+  OPENPROJECT_API_KEY:
+    description: "OpenProject API key for authentication"
+    required: true
+    sensitive: true  # Will be encrypted in Smithery
+
+  ENCRYPTION_KEY:
+    description: "Encryption key for secure data handling"
+    required: true
+    sensitive: true
+
+  # Optional configuration
+  LOG_LEVEL:
+    description: "Logging level (DEBUG, INFO, WARNING, ERROR)"
+    required: false
+    default: "INFO"
+
+  # Server configuration
+  # Note: Smithery will automatically assign ports. Fixed ports are for local testing only.
+  HOST:
+    description: "Server host binding (Smithery will override this value)"
+    required: false
+    default: "0.0.0.0"
+
+  PORT:
+    description: "Server port (Smithery will override this value - for local testing use ports 8000+)"
+    required: false
+    default: "8000"
+
+# Deployment configuration
+deployment:
+  # Resource requirements
+  resources:
+    cpu: "1"
+    memory: "512Mi"
+    storage: "1Gi"
+
+  # Auto-scaling configuration
+  scaling:
+    min_instances: 1
+    max_instances: 3
+    target_cpu_utilization: 70
+
+  # Health check
+  health_check:
+    enabled: true
+    interval: "30s"
+    timeout: "10s"
+    failure_threshold: 3
+
+# Build configuration (if Docker build is needed)
+build:
+  # Python version
+  python_version: "3.13"
+
+  # Requirements file
+  requirements: "pyproject.toml"
+
+  # Build commands
+  commands:
+    - "pip install -e .[http-transport]"
+    - "pip install -e .[full]"
+
+# Smithery deployment configuration
+runtime: "container"
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."
+startCommand:
+  type: "http"
+  configSchema:
+    type: "object"
+    required: ["openprojectBaseUrl", "openprojectApiKey"]
+    properties:
+      openprojectBaseUrl:
+        type: "string"
+        title: "OpenProject Base URL"
+        description: "Base URL for OpenProject instance"
+        default: "http://localhost:8080"
+      openprojectApiKey:
+        type: "string"
+        title: "OpenProject API Key"
+        description: "OpenProject API key for authentication"
+      encryptionKey:
+        type: "string"
+        title: "Encryption Key"
+        description: "Encryption key for secure data handling"
+        default: "default-encryption-key"
+  exampleConfig:
+    openprojectBaseUrl: "http://localhost:8080"
+    openprojectApiKey: "your-api-key-here"
+    encryptionKey: "your-encryption-key-here"
+
+# MCP server specific configuration
+mcp:
+  # Server capabilities
+  capabilities:
+    # Tool listing
+    list_tools: true
+    # Tool calling
+    call_tool: true
+    # Resource access
+    resources: false
+    # Prompts
+    prompts: false
+
+  # Protocol version
+  protocol_version: "2024-11-05"
+
+  # Server metadata
+  metadata:
+    author: "MCP OpenProject Team"
+    license: "MIT"
+    homepage: "https://github.com/your-org/mcp-openproject"
+    repository: "https://github.com/your-org/mcp-openproject.git"
+
+# Development and testing
+development:
+  # Local development settings
+  local:
+    command: "source .venv/bin/activate && mcp-openproject server --http --port 8001"
+    env_file: ".env"
+
+  # Testing configuration
+  test:
+    command: "source .venv/bin/activate && mcp-openproject test"
+    timeout: "30s"
+
+# Security configuration
+security:
+  # Transport security
+  transport:
+    # Enable HTTPS
+    https: true
+    # CORS configuration
+    cors:
+      enabled: true
+      origins: ["*"]  # In production, restrict to specific domains
+      methods: ["GET", "POST"]
+      headers: ["*"]
+
+  # API security
+  api:
+    # Rate limiting
+    rate_limit:
+      enabled: true
+      requests_per_minute: 60
+
+    # Authentication
+    auth:
+      # API key authentication support
+      api_key:
+        enabled: true
+        header: "Authorization"
+        prefix: "Bearer"

@@ -8,6 +8,8 @@ import asyncio
 import sys
 import os
 import logging
+import datetime
+import re
 from typing import Optional
 
 from mcp import ClientSession, StdioServerParameters
@@ -97,6 +99,28 @@ async def handle_list_tools() -> list[types.Tool]:
                     }
                 },
                 "required": ["work_package_id"]
+            }
+        ),
+        types.Tool(
+            name="generate-weekly-report",
+            description="Generate weekly report for a project",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project_id": {
+                        "type": "integer",
+                        "description": "Project ID"
+                    },
+                    "week_start": {
+                        "type": "string",
+                        "description": "Week start date (YYYY-MM-DD format)"
+                    },
+                    "week_end": {
+                        "type": "string",
+                        "description": "Week end date (YYYY-MM-DD format)"
+                    }
+                },
+                "required": ["project_id"]
             }
         )
     ]
@@ -219,6 +243,70 @@ async def handle_call_tool(name: str, arguments: dict | None) -> list[types.Text
                          f"Status: {getattr(wp, 'status', 'N/A')}\n"
                          f"Description: {getattr(wp, 'description', 'N/A')}\n"
                          f"Created at: {getattr(wp, 'created_at', 'N/A')}"
+                )]
+
+            elif name == "generate-weekly-report":
+                project_id = arguments["project_id"]
+                week_start = arguments.get("week_start")
+                week_end = arguments.get("week_end")
+
+                # Get project details
+                project = client.projects_api.view_project(id=project_id)
+
+                # Get work packages for the project
+                work_packages = client.work_packages_api.list_work_packages(
+                    filters=[{"status_id": {"operator": "!", "values": ["3", "5", "7"]}}],  # Exclude closed, rejected, cancelled
+                    sort_by=[["created_at", "desc"]]
+                )
+
+                # Generate weekly report
+                report_lines = [
+                    f"# OpenProject 週報 - {project.name}",
+                    f"プロジェクトID: {project_id}",
+                    f"週報期間: {week_start or '先週'} ~ {week_end or '本週'}",
+                    ""
+                ]
+
+                if hasattr(work_packages, 'embedded') and hasattr(work_packages.embedded, 'elements'):
+                    wp_list = work_packages.embedded.elements
+                    if wp_list:
+                        report_lines.append("## 更新された作業パッケージ")
+                        report_lines.append("")
+
+                        for wp in wp_list[:10]:  # 最初の10件のみ表示
+                            status = getattr(wp, 'status', '不明')
+                            assigned_to = getattr(wp, '_links', {}).get('assignee', {}).get('title', '未割り当て')
+
+                            report_lines.append(f"### {wp.subject}")
+                            report_lines.append(f"- **ステータス**: {status}")
+                            report_lines.append(f"- **担当者**: {assigned_to}")
+                            report_lines.append(f"- **タイプ**: {getattr(wp, 'type', 'N/A')}")
+                            report_lines.append(f"- **優先度**: {getattr(wp, 'priority', 'N/A')}")
+
+                            if hasattr(wp, 'description') and wp.description:
+                                # HTMLタグを除去して簡単な説明文に変換
+                                clean_desc = re.sub('<[^<]+?>', '', wp.description)
+                                clean_desc = re.sub(r'\s+', ' ', clean_desc).strip()
+                                if len(clean_desc) > 100:
+                                    clean_desc = clean_desc[:100] + "..."
+                                report_lines.append(f"- **説明**: {clean_desc}")
+
+                            report_lines.append("")
+
+                        if len(wp_list) > 10:
+                            report_lines.append(f"... 他 {len(wp_list) - 10} 件の作業パッケージ")
+                    else:
+                        report_lines.append("今週の更新はありません。")
+                else:
+                    report_lines.append("作業パッケージが見つかりませんでした。")
+
+                report_lines.append("")
+                report_lines.append("---")
+                report_lines.append(f"レポート生成時刻: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+                return [types.TextContent(
+                    type="text",
+                    text="\n".join(report_lines)
                 )]
 
             else:

@@ -156,21 +156,48 @@ def cmd_server(args) -> None:
     if config.encryption_key:
         os.environ["ENCRYPTION_KEY"] = config.encryption_key
 
-    # For now, only support stdio mode (the primary mode for MCP)
-    if args.http or args.sse:
-        print("❌ HTTP and SSE modes are not yet implemented. Use --stdio mode for MCP client integration.")
-        return
-
-    logger.info("Starting MCP OpenProject Server in stdio mode...")
-
-    try:
+    if args.stdio:
         # Use existing stdio server
-        stdio_main()
-    except KeyboardInterrupt:
-        logger.info("Received interrupt signal, shutting down...")
-    except Exception as e:
-        logger.error(f"Server error: {e}")
-        raise
+        logger.info("Starting MCP OpenProject Server in stdio mode...")
+        try:
+            stdio_main()
+        except KeyboardInterrupt:
+            logger.info("Received interrupt signal, shutting down...")
+        except Exception as e:
+            logger.error(f"Server error: {e}")
+            raise
+    elif args.http:
+        # Start HTTP server
+        logger.info("Starting MCP OpenProject Server in HTTP mode...")
+        try:
+            import uvicorn
+            from mcp_server.http.app import app
+
+            # Note: MCP server is now automatically set up in app.py via fastapi_mcp
+            # No manual setup needed - FastAPI endpoints are automatically converted to MCP tools
+
+            logger.info(f"HTTP server starting on {args.host}:{args.port}")
+            logger.info(f"MCP endpoint available at: http://{args.host}:{args.port}/mcp")
+            logger.info(f"Health check available at: http://{args.host}:{args.port}/health")
+
+            uvicorn.run(
+                app,
+                host=args.host,
+                port=args.port,
+                log_level=args.log_level.lower(),
+                reload=False
+            )
+        except KeyboardInterrupt:
+            logger.info("Received interrupt signal, shutting down...")
+        except Exception as e:
+            logger.error(f"HTTP server error: {e}")
+            raise
+    elif args.sse:
+        print("❌ SSE mode is not yet implemented. Use --stdio or --http mode.")
+        return
+    else:
+        print("❌ Please specify a transport mode: --stdio, --http, or --sse")
+        return
 
 
 def cmd_config(args) -> None:
