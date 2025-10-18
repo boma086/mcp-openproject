@@ -9,16 +9,17 @@ A Model Context Protocol (MCP) server for integrating OpenProject with AI assist
 ### Option 1: Install from PyPI (Recommended for Users)
 
 ```bash
-# Install from PyPI
-pip install mcp-openproject
-# or with pipx (isolated environment)
+#pipx (isolated environment)
 pipx install mcp-openproject
+#or Install from PyPI
+pip install mcp-openproject
+# Install globally from GitHub
+pipx install git+https://github.com/boma086/mcp-openproject.git
+
 
 # Test installation
 mcp-openproject --help
 ```
-
-**✅ PyPI Verified**: [mcp-openproject v0.0.1](https://pypi.org/project/mcp-openproject/0.0.1/) - Production ready
 
 ### Option 2: Development Installation
 
