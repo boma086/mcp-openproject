@@ -34,7 +34,7 @@ pip install -e .
 
 ## ⚙️ MCP Client Configuration
 
-### Claude Code / Windsurf Configuration
+### Windsurf Configuration
 
 Add this to your MCP client configuration:
 
