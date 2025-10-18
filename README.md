@@ -1,23 +1,18 @@
 # MCP OpenProject Server
 
-A Model Context Protocol (MCP) server for integrating OpenProject with AI assistants like Claude, Windsurf, and other MCP-compatible clients.
+A Model Context Protocol (MCP) server for integrating OpenProject with AI assistants like Windsurf, and other MCP-compatible clients.
 
-**Version**: 0.0.1 | **Status**: Production Ready | **PyPI**: [mcp-openproject](https://pypi.org/project/mcp-openproject/)
+**Version**: 0.0.2 | **Status**: Production Ready | **PyPI**: [mcp-openproject](https://pypi.org/project/mcp-openproject/)
 
 ## 🚀 Quick Start - 5 Minutes to Running
 
 ### Option 1: Install from PyPI (Recommended for Users)
 
 ```bash
-# Install from PyPI (recommended)
+# Install from PyPI
 pip install mcp-openproject
 # or with pipx (isolated environment)
 pipx install mcp-openproject
-
-# Set environment variables
-export OPENPROJECT_BASE_URL="http://localhost:8090/"
-export OPENPROJECT_API_KEY="your-api-key-here"
-export ENCRYPTION_KEY="your-encryption-key-here"
 
 # Test installation
 mcp-openproject --help
@@ -34,20 +29,7 @@ cd mcp-openproject
 
 # Install in development mode
 pip install -e .
-
-# Set environment variables
-export OPENPROJECT_BASE_URL="http://localhost:8090/"
-export OPENPROJECT_API_KEY="your-api-key-here"
-export ENCRYPTION_KEY="your-encryption-key-here"
 ```
-
-### Option 3: Smithery Platform (Cloud Deployment)
-
-For cloud deployment without local installation, use the [Smithery Platform](https://smithery.ai):
-
-1. Visit the MCP OpenProject server on Smithery
-2. Configure your OpenProject instance URL and API key
-3. Start using immediately - no installation required
 
 ## ⚙️ MCP Client Configuration
 
@@ -63,8 +45,7 @@ Add this to your MCP client configuration:
       "args": ["server", "--stdio"],
       "env": {
         "OPENPROJECT_BASE_URL": "http://localhost:8090/",
-        "OPENPROJECT_API_KEY": "your-api-key-here",
-        "ENCRYPTION_KEY": "your-encryption-key-here"
+        "OPENPROJECT_API_KEY": "your-api-key-here"
       }
     }
   }
@@ -78,12 +59,11 @@ Add this to your MCP client configuration:
 ## Features
 
 - **🚀 PyPI Installation**: Install from PyPI with `pip install mcp-openproject`
-- **📡 Multiple Transport Modes**: Stdio and HTTP support (SSE planned)
+- **📡 Multiple Transport Modes**: Stdio (HTTP SSE planned)
 - **🔗 OpenProject API Integration**: Complete access to projects, work packages, and tasks
 - **🛡️ Security**: Encrypted configuration and API key management
 - **🖥️ CLI Interface**: Comprehensive command-line tools
-- **🎯 MCP Compatible**: Works with Claude Code, Windsurf, and other MCP clients
-- **☁️ Cloud Ready**: Smithery platform support for zero-install deployment
+- **🎯 MCP Compatible**: Works with Windsurf, and other MCP clients
 - **✅ Production Tested**: Verified installation and CLI functionality
 
 ## Configuration
@@ -92,7 +72,6 @@ Add this to your MCP client configuration:
 
 - `OPENPROJECT_BASE_URL`: Your OpenProject instance URL (e.g., `http://localhost:8090/`)
 - `OPENPROJECT_API_KEY`: Your OpenProject API key
-- `ENCRYPTION_KEY`: Encryption key for sensitive data (generate one: `openssl rand -hex 32`)
 
 ### Example Configuration
 
@@ -100,7 +79,6 @@ Add this to your MCP client configuration:
 # Add to your ~/.bashrc or ~/.zshrc
 export OPENPROJECT_BASE_URL="http://localhost:8090/"
 export OPENPROJECT_API_KEY="your-api-key-here"
-export ENCRYPTION_KEY="your-32-byte-encryption-key-here"
 ```
 
 ## CLI Commands
@@ -131,72 +109,6 @@ mcp-openproject status
 - **Time Tracking**: Log time entries, track project hours
 - **Team Management**: Access user information and team assignments
 
-## MCP Client Integration
-
-### Claude Code Configuration
-
-Add to your Claude Code configuration:
-
-```json
-{
-  "mcpServers": {
-    "openproject": {
-      "command": "mcp-openproject",
-      "args": ["server", "--stdio"],
-      "env": {
-        "OPENPROJECT_BASE_URL": "http://localhost:8090/",
-        "OPENPROJECT_API_KEY": "your-api-key-here",
-        "ENCRYPTION_KEY": "your-encryption-key-here"
-      }
-    }
-  }
-}
-```
-
-### Windsurf Configuration
-
-**Step 1: Install MCP Server**
-```bash
-pip install mcp-openproject
-# or with pipx (recommended)
-pipx install mcp-openproject
-```
-
-**Step 2: Add to Windsurf MCP Configuration**
-```json
-{
-  "mcpServers": {
-    "openproject": {
-      "command": "mcp-openproject",
-      "args": ["server", "--stdio"],
-      "env": {
-        "OPENPROJECT_BASE_URL": "http://localhost:8090/",
-        "OPENPROJECT_API_KEY": "your-api-key-here",
-        "ENCRYPTION_KEY": "your-encryption-key-here"
-      }
-    }
-  }
-}
-```
-
-### General MCP Client Configuration
-
-For any MCP-compatible client:
-
-1. **Install the server**: `pip install mcp-openproject` or `pipx install mcp-openproject`
-2. **Configure environment variables** (as shown above)
-3. **Add MCP server configuration**:
-   ```json
-   {
-     "mcpServers": {
-       "openproject": {
-         "command": "mcp-openproject",
-         "args": ["server", "--stdio"]
-       }
-     }
-   }
-   ```
-
 ## Deployment Options
 
 ### Local Development
@@ -225,13 +137,6 @@ sudo systemctl enable mcp-openproject
 sudo systemctl start mcp-openproject
 ```
 
-### Cloud Deployment (Smithery)
-
-No installation required - configure and run directly on Smithery platform:
-1. Visit [Smithery MCP OpenProject](https://smithery.ai)
-2. Configure OpenProject connection
-3. Start using immediately
-
 ## Architecture
 
 This project uses a comprehensive architecture with:
@@ -245,9 +150,8 @@ This project uses a comprehensive architecture with:
 ### Key Components
 
 - `mcp_server/`: Core MCP server implementation
-- `docs/`: Comprehensive documentation and guides
 - `pyproject.toml`: Project configuration with comprehensive dependency management
-- `smithery.yaml`: Smithery platform deployment configuration
+#- `smithery.yaml`: Smithery platform deployment configuration
 
 ## Transport Modes
 
@@ -256,7 +160,7 @@ This project uses a comprehensive architecture with:
 - **Command**: `mcp-openproject server --stdio`
 - **Benefits**: Standard MCP protocol, low latency, secure
 
-### ✅ HTTP Mode (For Web Integration)
+###  🚧  HTTP Mode (Planned)
 - **Use Case**: Web applications, HTTP API integration
 - **Command**: `mcp-openproject server --http --port 8000`
 - **Benefits**: RESTful API, web-friendly, CORS support
@@ -265,14 +169,6 @@ This project uses a comprehensive architecture with:
 - **Status**: Planned for future release
 - **Use Case**: Real-time updates, streaming responses
 - **Command**: `mcp-openproject server --sse --port 8001` (future)
-
-## Support
-
-### Documentation
-- **Installation Guide**: [docs/installation.md](docs/installation.md)
-- **Configuration Guide**: [docs/guides/configuration-guide.md](docs/guides/configuration-guide.md)
-- **Troubleshooting**: [docs/troubleshooting.md](docs/troubleshooting.md)
-- **Architecture**: [docs/architecture/](docs/architecture/)
 
 ### Getting Help
 - **GitHub Issues**: [Report bugs](https://github.com/boma086/mcp-openproject/issues)
@@ -283,52 +179,11 @@ This project uses a comprehensive architecture with:
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-### Development Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/boma086/mcp-openproject.git
-cd mcp-openproject
-
-# Install development dependencies
-pip install -e ".[dev]"
-
-# Run tests
-uv run pytest
-
-# Run linting
-uv run ruff check
-uv run black .
-```
-
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Verification
-
-### ✅ Production Testing Completed
-
-**PyPI Installation**:
-- ✅ `pip install mcp-openproject` - Successfully installs from production PyPI
-- ✅ `uv pip install mcp-openproject` - Successfully installs with uv package manager
-
-**CLI Functionality**:
-- ✅ `mcp-openproject --help` - Complete help system working
-- ✅ `mcp-openproject config` - Configuration display and environment variable reading
-- ✅ All server modes (stdio, http) operational
-
-**MCP Integration**:
-- ✅ Stdio mode for Claude Code/Windsurf integration
-- ✅ HTTP mode with fastapi_mcp library
-- ✅ OpenProject API client generation and integration
-
-### Tested Environments
-
-- **Package Managers**: pip, uv, pipx
-- **Python Versions**: 3.10+ (tested on 3.11)
-- **Platforms**: macOS, Linux (expected Windows compatibility)
-- **MCP Clients**: Claude Code, Windsurf (configuration verified)
 
 ## Changelog
 
