@@ -6,7 +6,7 @@ A Model Context Protocol (MCP) server for integrating OpenProject with AI assist
 
 ## 🚀 Quick Start - 5 Minutes to Running
 
-### Option 1: Install from PyPI (Recommended for Users)
+### Option 1: Install from PyPI or github (Recommended for Users)
 
 ```bash
 #pipx (isolated environment)
