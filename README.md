@@ -53,9 +53,6 @@ Add this to your MCP client configuration:
 }
 ```
 
-**Two-step process for MCP clients:**
-1. **Install**: `pip install mcp-openproject` or `pipx install mcp-openproject`
-2. **Configure**: Add the JSON configuration above to your MCP client
 
 ## Features
 
